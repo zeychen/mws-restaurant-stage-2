@@ -143,7 +143,7 @@ createRestaurantHTML = (restaurant) => {
 
   const image = document.createElement('img');
   image.alt = 'restaurant ' + restaurant.name + ' profile photo';
-  image.className = 'restaurant-img';
+  image.className = 'restaurant-img lazy-load-img';
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
   article.append(image);
 
@@ -166,6 +166,7 @@ createRestaurantHTML = (restaurant) => {
 
   return li
 }
+
 
 /**
  * Add markers for current restaurants to the map.
