@@ -19,9 +19,46 @@ class DBHelper {
   /**
    * Create IDB
    **/
-  static createDB(restaurants) {
-    var dbPromise = window.indexedDB.open('restaurantDB');
 
+
+  static createDB(restaurants) {
+    // Makes sure indexedDB works across different browsers
+    var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB || window.shimIndexedDB;
+  
+    // Open (or create) restaurant database
+    var dbPromise = indexedDB.open("restaurantDB", 1);
+
+    dbPromise.onupgradeneeded = function() {
+      var db = dbPromise.result;
+      var store = db.createObjectStore("RestaurantObjectStore", {keyPath: "id"});
+      var index = store.createIndex("by-id", "id");
+
+      console.log("~~~~~~~~~~~ created DB ~~~~~~~~~~~");
+    }
+
+    dbPromise.onerror = function() {
+      console.log("could not create indexedDB");
+    }
+
+    dbPromise.onsuccess = function() {
+
+      console.log("~~~~~~~~~~~ db sucessfully created ~~~~~~~~~~~");
+      // Start a new transaction
+      var db = dbPromise.result;
+      var tx = db.transaction("RestaurantObjectStore", "readwrite");
+      var store = tx.objectStore("RestaurantObjectStore");
+
+      // Store restaurants in DB
+      restaurants.forEach(function(restaurant){
+        store.put(restaurant);
+        // console.log("added restaurant: " + restaurant.id);
+      });
+
+      // Close the db when the transaction is done
+      tx.oncomplete = function() {
+          db.close();
+      };
+    }
   }
   
 
