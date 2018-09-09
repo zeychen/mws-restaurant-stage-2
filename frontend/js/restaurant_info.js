@@ -1,6 +1,7 @@
 let restaurant;
 var map;
 
+
 /**
  * Initialize Google map, called from HTML.
  */
@@ -41,11 +42,15 @@ fetchRestaurantFromURL = (callback) => {
         return;
       }
       fillRestaurantHTML();
+      fillMetaDesc();
       callback(null, restaurant)
     });
   }
 }
 
+fillMetaDesc = (restaurant = self.restaurant) => {
+  document.querySelector('meta[name=description]').setAttribute("content",restaurant.name);
+}
 /**
  * Create restaurant HTML and add it to the webpage
  */
