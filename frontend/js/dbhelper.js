@@ -54,13 +54,14 @@ class DBHelper {
       });
 
       // Close the db when the transaction is done
-      tx.oncomplete = function() {
+      tx.oncomplete = function(event) {
+        console.log("transaction complete: " + event)
           db.close();
       };
     }
   }
   
-  static getCachedData(results){
+  static getCachedData(callback){
     // Start a new DB transaction
     var dbPromise = DBHelper.openDB();
     dbPromise.onsuccess = function() {
@@ -71,37 +72,46 @@ class DBHelper {
       // get cached restaurants from DB
       var cached = store.getAll();
 
+      cached.onsuccess = () => {
+        callback(null, cached.result);
+      }
+
       // Close the db when the transaction is done
       tx.oncomplete = function() {
           db.close();
       };
     }
   }
+
   /**
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
     let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onerror = function() {
-      DBHelper.getCachedData(function(restaurants){
-        if(restaurants.length > 0){
-          console.log("Unable to reach server. Currently using cached data.")
+
+    if(navigator.online) {
+      xhr.open('GET', DBHelper.DATABASE_URL);
+    
+      xhr.onload = function() {
+        if (xhr.status === 200) { // Got a success response from server!
+          const restaurantsJSON = JSON.parse(xhr.responseText);
+          DBHelper.createDB(restaurantsJSON); // Cache restaurant in IDB
+          callback(null, restaurantsJSON);
+        } else { // Oops!. Got an error from server.
+          const error = (`Request failed. Returned status of ${xhr.status}`);
+          callback(error, null);
+        }
+      };
+      xhr.send();
+    } else {
+      console.log("Unable to reach server. Currently using cached data.")
+      DBHelper.getCachedData(function(error, restaurants){
+        if(restaurants.length > 0){          
           callback(null, restaurants);
         }
       })
     }
-    xhr.onload = function() {
-      if (xhr.status === 200) { // Got a success response from server!
-        const restaurantsJSON = JSON.parse(xhr.responseText);
-        DBHelper.createDB(restaurantsJSON); // Cache restaurant in IDB
-        callback(null, restaurantsJSON);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+    
   }
 
   /**
