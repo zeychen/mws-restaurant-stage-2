@@ -48,9 +48,13 @@ fetchRestaurantFromURL = (callback) => {
   }
 }
 
+/**
+ * Add meta description to page
+ */
 fillMetaDesc = (restaurant = self.restaurant) => {
   document.querySelector('meta[name=description]').setAttribute("content",restaurant.name);
 }
+
 /**
  * Create restaurant HTML and add it to the webpage
  */

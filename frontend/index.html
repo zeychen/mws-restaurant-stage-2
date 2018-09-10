@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
+  <meta name="theme-color" content="#3397DB"/>
   <meta name="Description" content="restaurant reviews in New York City">
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <link rel="stylesheet" href="css/styles.css">
   <link rel="preconnect" href="https://maps.gstatic.com">
   <link rel="preconnect" href="https://fonts.google.com">
+  <link rel="manifest" href="/manifest.json">
   <title>Restaurant Reviews</title>
 </head>
 
@@ -25,25 +27,24 @@
       <div class="filter-options" role="search" aria-label="filters" id="filter" >
         <h2>Filter Results</h2>
         <div class="filters">
-          <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
-            <option value="all">All Neighborhoods</option>
+          <select id="neighborhoods-select" aria-labelledby="neighborhoods-options" name="neighborhoods" onchange="updateRestaurants()">
+            <option id="neighborhoods-options" value="all">All Neighborhoods</option>
           </select>
-          <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
-            <option value="all">All Cuisines</option>
+          <select id="cuisines-select" aria-labelledby="cuisines-options" name="cuisines" onchange="updateRestaurants()">
+            <option id="cuisines-options" value="all">All Cuisines</option>
           </select>
         </div>
       </div>
       <ul id="restaurants-list" aria-label="restaurant list"></ul>
     </section>
   </main>
-
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/sw_registration.js"></script>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEwOJQAdsxaQFqXkFTvxAWQaOkF_j4Lo8&libraries=places&callback=initMap"></script>
+  <script type="application/javascript" charset="utf-8" src="js/optimization.js"></script>
 
-
-  <footer id="footer" role="content-info">
+  <footer id="footer" role="contentinfo">
     <span>Copyright (c) 2017
      <a href="/"><strong>Restaurant Reviews</strong></a> 
      All Rights Reserved.</span>

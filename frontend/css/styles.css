@@ -27,7 +27,7 @@ ul, li {
 	color: #333;
 }
 a {
-	color: orange;
+	color: #3397db;
 	text-decoration: none;
 }
 a:hover, a:focus {
@@ -177,7 +177,7 @@ header h1 {
   min-width: 100%;
 }
 #restaurants-list li h3 {
-  color: #f18200;
+  color: #045175;
   font-family: Arial,sans-serif;
   font-size: 14pt;
   font-weight: 200;
@@ -193,7 +193,7 @@ header h1 {
   margin-bottom: 15px;
 }
 #restaurants-list li a {
-  background-color: orange;
+  background-color: #045175;
   border-bottom: 3px solid #eee;
   color: #fff;
   display: inline-block;
