@@ -165,7 +165,7 @@ createRestaurantHTML = (restaurant) => {
   image.alt = `${restaurant.name} profile photo`;
   image.className = 'restaurant-img lazy-img';
   image.src = `${withoutExtensions}.webp`;
-  // image.datasrc = `${withoutExtensions}-1x.jpg`;
+  image.datasrc = `${withoutExtensions}.webp`;
   // image.srcset = `${withoutExtensions}-1x.jpg`;
   article.append(image);
 

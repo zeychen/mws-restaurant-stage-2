@@ -27,11 +27,11 @@ ul, li {
 	color: #333;
 }
 a {
-	color: #3397db;
+	color: #ddd;
 	text-decoration: none;
 }
 a:hover, a:focus {
-	color: #3397db;
+	color: #fdfdfd;
 	text-decoration: none;
 }
 a img{
@@ -51,7 +51,7 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 }
 #footer {
   background-color: #444;
-  color: #aaa;
+  color: #ddd;
   font-size: 8pt;
   letter-spacing: 1px;
   padding: 25px;
