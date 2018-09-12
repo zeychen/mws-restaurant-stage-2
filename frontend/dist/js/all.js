@@ -50,12 +50,12 @@ class DBHelper {
       // Store restaurants in DB
       restaurants.forEach(function(restaurant){
         store.put(restaurant);
-        console.log("added restaurant: " + restaurant.id);
+        // console.log("added restaurant: " + restaurant.id);
       });
 
       // Close the db when the transaction is done
       tx.oncomplete = function(event) {
-        console.log("transaction complete: " + event)
+        // console.log("transaction complete: " + event)
           db.close();
       };
     }
@@ -89,7 +89,7 @@ class DBHelper {
   static fetchRestaurants(callback) {
     let xhr = new XMLHttpRequest();
 
-    if(navigator.online) {
+    if(navigator.onLine) {
       xhr.open('GET', DBHelper.DATABASE_URL);
     
       xhr.onload = function() {
@@ -252,31 +252,6 @@ class DBHelper {
 
 }
 
-import idb from 'idb';
-
-var dbPromise = idb.open('restaurantDB', 1, function(upgradeDb) {
-    var restaurant = upgradeDb.createObjectStore('restaurants', {
-      keyPath: 'id'
-    });
-    store.createIndex('by-id', 'id');
-  });
-
-
-// function openDatabase() {
-//   // If the browser doesn't support service worker,
-//   // we don't care about having a database
-//   if (!navigator.serviceWorker) {
-//     return Promise.resolve();
-//   }
-
-//   return idb.open('restaurantDB', 1, function(upgradeDb) {
-//     var restaurant = upgradeDb.createObjectStore('restaurants', {
-//       keyPath: 'id'
-//     });
-//     store.createIndex('by-id', 'id');
-//   });
-// }
-
 let restaurants,
   neighborhoods,
   cuisines
@@ -381,6 +356,7 @@ updateRestaurants = () => {
     } else {
       resetRestaurants(restaurants);
       fillRestaurantsHTML();
+      setLazyLoadImage();
     }
   })
 }
@@ -411,6 +387,22 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   addMarkersToMap();
 }
 
+let restaurantImage = (restaurant) => {
+  const image = document.createElement('img');
+  image.className = 'restaurant-img lazy-img';
+  image.alt = `${restaurant.name} profile photo`;
+
+  const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
+  if (defaultImage) {
+    const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
+    // image.sizes = '28vw';
+    image.src = `${withoutExtensions}.jpg`;
+    image.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
+    image.classList.add('lazy-img');
+  }
+  return image;
+}
+
 /**
  * Create restaurant HTML.
  */
@@ -420,10 +412,15 @@ createRestaurantHTML = (restaurant) => {
   article.setAttribute('role','navigation')
   li.append(article);
 
+  // article.append(restaurantImage(restaurant));
+  const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
   const image = document.createElement('img');
-  image.alt = 'restaurant ' + restaurant.name + ' profile photo';
-  image.className = 'restaurant-img lazy-load-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
+  image.alt = `${restaurant.name} profile photo`;
+  image.className = 'restaurant-img lazy-img';
+  image.src = `${withoutExtensions}.webp`;
+  // image.datasrc = `${withoutExtensions}-1x.jpg`;
+  // image.srcset = `${withoutExtensions}-1x.jpg`;
   article.append(image);
 
   const name = document.createElement('h3');
@@ -446,6 +443,35 @@ createRestaurantHTML = (restaurant) => {
   return li
 }
 
+/**
+ * Set up lazy load images using Image Observer
+ */
+
+
+let setLazyLoadImage = () => {
+  let lazyImages = [].slice.call(document.querySelectorAll('img.lazy-img'));
+
+  if ("IntersectionObserver" in window && "IntersectionObserverEntry" in window && "intersectionRatio" in window.IntersectionObserverEntry.prototype) {
+    lazyImages.forEach(lazyImage => lazyImageObserver.observe(lazyImage));
+  }  else {
+    console.log('~~~~~~~~~~~~~~~~~ no IntersectionObserver ~~~~~~~~~~~~~~~~~');
+    return;
+  }
+}
+
+let lazyImageObserver = new IntersectionObserver( entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      let lazyImage = entry.target;
+      // lazyImage.src = lazyImage.dataset.src;
+      // lazyImage.srcset = lazyImage.dataset.srcset;
+      lazyImage.classList.remove('lazy-img');
+      lazyImageObserver.unobserve(lazyImage);
+    }
+  });
+
+
+});
 
 /**
  * Add markers for current restaurants to the map.
@@ -461,8 +487,38 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 }
 
+document.addEventListener('DOMContentLoaded', (event) => {
+  lazyLoadImages();
+});
+/**
+ * Lazy load images
+ */
+lazyLoadImages = () => {
+  var lazyImages = [].slice.call(document.querySelectorAll(".lazy-img"));
+
+  if ("IntersectionObserver" in window) {
+    let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          let lazyImage = entry.target;
+          lazyImage.src = lazyImage.dataset.src;
+          lazyImage.srcset = lazyImage.dataset.srcset;
+          lazyImage.classList.remove("lazy");
+          lazyImageObserver.unobserve(lazyImage);
+        }
+      });
+    });
+
+    lazyImages.forEach(function(lazyImage) {
+      lazyImageObserver.observe(lazyImage);
+    });
+  } else {
+    // Possibly fall back to a more compatible method here
+  }
+}
 let restaurant;
 var map;
+
 
 /**
  * Initialize Google map, called from HTML.
@@ -504,9 +560,17 @@ fetchRestaurantFromURL = (callback) => {
         return;
       }
       fillRestaurantHTML();
+      fillMetaDesc();
       callback(null, restaurant)
     });
   }
+}
+
+/**
+ * Add meta description to page
+ */
+fillMetaDesc = (restaurant = self.restaurant) => {
+  document.querySelector('meta[name=description]').setAttribute("content",restaurant.name);
 }
 
 /**

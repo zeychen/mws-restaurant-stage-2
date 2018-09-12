@@ -102,6 +102,7 @@ updateRestaurants = () => {
     } else {
       resetRestaurants(restaurants);
       fillRestaurantsHTML();
+      setLazyLoadImage();
     }
   })
 }
@@ -132,6 +133,22 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   addMarkersToMap();
 }
 
+let restaurantImage = (restaurant) => {
+  const image = document.createElement('img');
+  image.className = 'restaurant-img lazy-img';
+  image.alt = `${restaurant.name} profile photo`;
+
+  const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
+  if (defaultImage) {
+    const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
+    // image.sizes = '28vw';
+    image.src = `${withoutExtensions}.jpg`;
+    image.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
+    image.classList.add('lazy-img');
+  }
+  return image;
+}
+
 /**
  * Create restaurant HTML.
  */
@@ -141,10 +158,15 @@ createRestaurantHTML = (restaurant) => {
   article.setAttribute('role','navigation')
   li.append(article);
 
+  // article.append(restaurantImage(restaurant));
+  const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
   const image = document.createElement('img');
-  image.alt = 'restaurant ' + restaurant.name + ' profile photo';
+  const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
+  image.alt = `${restaurant.name} profile photo`;
   image.className = 'restaurant-img lazy-img';
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  image.src = `${withoutExtensions}.webp`;
+  // image.datasrc = `${withoutExtensions}-1x.jpg`;
+  // image.srcset = `${withoutExtensions}-1x.jpg`;
   article.append(image);
 
   const name = document.createElement('h3');
@@ -167,6 +189,35 @@ createRestaurantHTML = (restaurant) => {
   return li
 }
 
+/**
+ * Set up lazy load images using Image Observer
+ */
+
+
+let setLazyLoadImage = () => {
+  let lazyImages = [].slice.call(document.querySelectorAll('img.lazy-img'));
+
+  if ("IntersectionObserver" in window && "IntersectionObserverEntry" in window && "intersectionRatio" in window.IntersectionObserverEntry.prototype) {
+    lazyImages.forEach(lazyImage => lazyImageObserver.observe(lazyImage));
+  }  else {
+    console.log('~~~~~~~~~~~~~~~~~ no IntersectionObserver ~~~~~~~~~~~~~~~~~');
+    return;
+  }
+}
+
+let lazyImageObserver = new IntersectionObserver( entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      let lazyImage = entry.target;
+      // lazyImage.src = lazyImage.dataset.src;
+      // lazyImage.srcset = lazyImage.dataset.srcset;
+      lazyImage.classList.remove('lazy-img');
+      lazyImageObserver.unobserve(lazyImage);
+    }
+  });
+
+
+});
 
 /**
  * Add markers for current restaurants to the map.

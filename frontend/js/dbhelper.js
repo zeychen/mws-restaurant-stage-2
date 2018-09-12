@@ -50,12 +50,12 @@ class DBHelper {
       // Store restaurants in DB
       restaurants.forEach(function(restaurant){
         store.put(restaurant);
-        console.log("added restaurant: " + restaurant.id);
+        // console.log("added restaurant: " + restaurant.id);
       });
 
       // Close the db when the transaction is done
       tx.oncomplete = function(event) {
-        console.log("transaction complete: " + event)
+        // console.log("transaction complete: " + event)
           db.close();
       };
     }
@@ -89,7 +89,7 @@ class DBHelper {
   static fetchRestaurants(callback) {
     let xhr = new XMLHttpRequest();
 
-    if(navigator.online) {
+    if(navigator.onLine) {
       xhr.open('GET', DBHelper.DATABASE_URL);
     
       xhr.onload = function() {
