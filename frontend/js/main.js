@@ -86,6 +86,10 @@ window.initMap = () => {
 /**
  * Update page and map for current restaurants.
  */
+
+/**
+ * Update page and map for current restaurants.
+ */
 updateRestaurants = () => {
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
@@ -133,7 +137,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   addMarkersToMap();
 }
 
-let restaurantImage = (restaurant) => {
+let createImg = (restaurant) => {
   const image = document.createElement('img');
   image.className = 'restaurant-img lazy-img';
   image.alt = `${restaurant.name} profile photo`;
@@ -141,9 +145,8 @@ let restaurantImage = (restaurant) => {
   const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
   if (defaultImage) {
     const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
-    // image.sizes = '28vw';
-    image.src = `${withoutExtensions}.jpg`;
-    image.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
+    image.dataset.src = `${withoutExtensions}.jpg`;
+    image.dataset.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
     image.classList.add('lazy-img');
   }
   return image;
@@ -158,16 +161,7 @@ createRestaurantHTML = (restaurant) => {
   article.setAttribute('role','navigation')
   li.append(article);
 
-  // article.append(restaurantImage(restaurant));
-  const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
-  const image = document.createElement('img');
-  const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
-  image.alt = `${restaurant.name} profile photo`;
-  image.className = 'restaurant-img lazy-img';
-  image.src = `${withoutExtensions}.webp`;
-  image.datasrc = `${withoutExtensions}.webp`;
-  // image.srcset = `${withoutExtensions}-1x.jpg`;
-  article.append(image);
+  article.append(createImg(restaurant));
 
   const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
@@ -209,7 +203,7 @@ let lazyImageObserver = new IntersectionObserver( entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       let lazyImage = entry.target;
-      // lazyImage.src = lazyImage.dataset.src;
+      lazyImage.src = lazyImage.dataset.src;
       // lazyImage.srcset = lazyImage.dataset.srcset;
       lazyImage.classList.remove('lazy-img');
       lazyImageObserver.unobserve(lazyImage);
