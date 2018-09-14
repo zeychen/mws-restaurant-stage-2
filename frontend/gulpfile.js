@@ -39,14 +39,14 @@ gulp.task('scripts', function() {
 		.pipe(gulp.dest('dist/js'));
 });
 
-gulp.task('scripts-dist', function() {
-	gulp.src('js/**/*.js')
-		.pipe(sourcemaps.init())
-		.pipe(concat('all.js'))
-		.pipe(uglify())
-		.pipe(sourcemaps.write())
-		.pipe(gulp.dest('dist/js'));
-});
+// gulp.task('scripts-dist', function() {
+// 	gulp.src('js/**/*.js')
+// 		.pipe(sourcemaps.init())
+// 		.pipe(concat('all.js'))
+// 		.pipe(uglify())
+// 		.pipe(sourcemaps.write())
+// 		.pipe(gulp.dest('dist/js'));
+// });
 
 gulp.task('copy-html', function() {
 	gulp.src('./index.html')

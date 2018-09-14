@@ -45,6 +45,10 @@ self.addEventListener('activate', function(event) {
 // fetch event
 self.addEventListener('fetch', function(event) {
   var requestUrl = new URL(event.request.url);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~" + requestUrl);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~" + requestUrl.pathname);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~" + location.origin);
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~" + requestUrl.origin.startsWith);
   if (requestUrl.origin === location.origin) {
     if (requestUrl.pathname === '/') {
       event.respondWith(caches.match('/index.html'));
@@ -56,6 +60,11 @@ self.addEventListener('fetch', function(event) {
     }
   }
 
+  if(requestUrl.origin.startsWith('https://map.googleapis.com/maps/vt')){
+    event.respondWith(servePhoto(event.request));
+      return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(function(response) {
       if(response) return response;
@@ -63,6 +72,16 @@ self.addEventListener('fetch', function(event) {
     })
   );
 });
+  
+  
+
+  
+  // event.respondWith(
+  //   caches.match(event.request).then(function(response) {
+  //     if(response) return response;
+  //     return fetch(event.request);
+  //   })
+  // );
 
 function servePhoto(request) {
   var storageUrl = request.url.replace(/-\d+px\.jpg$/, '');

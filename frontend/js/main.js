@@ -145,7 +145,7 @@ let createImg = (restaurant) => {
   const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
   if (defaultImage) {
     const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
-    image.dataset.src = `${withoutExtensions}.jpg`;
+    image.dataset.src = `${withoutExtensions}.webp`;
     image.dataset.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
     image.classList.add('lazy-img');
   }
@@ -209,8 +209,6 @@ let lazyImageObserver = new IntersectionObserver( entries => {
       lazyImageObserver.unobserve(lazyImage);
     }
   });
-
-
 });
 
 /**

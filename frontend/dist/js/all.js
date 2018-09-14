@@ -340,6 +340,10 @@ window.initMap = () => {
 /**
  * Update page and map for current restaurants.
  */
+
+/**
+ * Update page and map for current restaurants.
+ */
 updateRestaurants = () => {
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
@@ -387,7 +391,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   addMarkersToMap();
 }
 
-let restaurantImage = (restaurant) => {
+let createImg = (restaurant) => {
   const image = document.createElement('img');
   image.className = 'restaurant-img lazy-img';
   image.alt = `${restaurant.name} profile photo`;
@@ -395,9 +399,8 @@ let restaurantImage = (restaurant) => {
   const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
   if (defaultImage) {
     const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
-    // image.sizes = '28vw';
-    image.src = `${withoutExtensions}.jpg`;
-    image.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
+    image.dataset.src = `${withoutExtensions}.webp`;
+    image.dataset.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
     image.classList.add('lazy-img');
   }
   return image;
@@ -412,16 +415,7 @@ createRestaurantHTML = (restaurant) => {
   article.setAttribute('role','navigation')
   li.append(article);
 
-  // article.append(restaurantImage(restaurant));
-  const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
-  const image = document.createElement('img');
-  const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
-  image.alt = `${restaurant.name} profile photo`;
-  image.className = 'restaurant-img lazy-img';
-  image.src = `${withoutExtensions}.webp`;
-  image.datasrc = `${withoutExtensions}.webp`;
-  // image.srcset = `${withoutExtensions}-1x.jpg`;
-  article.append(image);
+  article.append(createImg(restaurant));
 
   const name = document.createElement('h3');
   name.innerHTML = restaurant.name;
@@ -463,14 +457,12 @@ let lazyImageObserver = new IntersectionObserver( entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       let lazyImage = entry.target;
-      // lazyImage.src = lazyImage.dataset.src;
+      lazyImage.src = lazyImage.dataset.src;
       // lazyImage.srcset = lazyImage.dataset.srcset;
       lazyImage.classList.remove('lazy-img');
       lazyImageObserver.unobserve(lazyImage);
     }
   });
-
-
 });
 
 /**
@@ -560,6 +552,7 @@ fetchRestaurantFromURL = (callback) => {
         return;
       }
       fillRestaurantHTML();
+      setLazyLoadImage();
       fillMetaDesc();
       callback(null, restaurant)
     });
@@ -586,9 +579,15 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   address.innerHTML = restaurant.address;
 
   const image = document.getElementById('restaurant-img');
-  image.className = 'restaurant-img'
-  image.src = DBHelper.imageUrlForRestaurant(restaurant);
-  image.alt = restaurant.name + ' Profile Image';
+  const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
+  const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
+  image.dataset.src = `${withoutExtensions}.jpg`;
+  image.dataset.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
+  image.classList.add('lazy-img');
+  // const image = document.getElementById('restaurant-img');
+  // image.className = 'restaurant-img'
+  // image.src = DBHelper.imageUrlForRestaurant(restaurant);
+  // image.alt = restaurant.name + ' Profile Image';
   // image.setAttribute("srcset", "");
 
   const cuisine = document.getElementById('restaurant-cuisine');
@@ -602,6 +601,29 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   // fill reviews
   fillReviewsHTML();
 }
+
+let setLazyLoadImage = () => {
+  let lazyImages = [].slice.call(document.querySelectorAll('img.lazy-img'));
+
+  if ("IntersectionObserver" in window && "IntersectionObserverEntry" in window && "intersectionRatio" in window.IntersectionObserverEntry.prototype) {
+    lazyImages.forEach(lazyImage => lazyImageObserver.observe(lazyImage));
+  }  else {
+    console.log('~~~~~~~~~~~~~~~~~ no IntersectionObserver ~~~~~~~~~~~~~~~~~');
+    return;
+  }
+}
+
+let lazyImageObserver = new IntersectionObserver( entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      let lazyImage = entry.target;
+      lazyImage.src = lazyImage.dataset.src;
+      // lazyImage.srcset = lazyImage.dataset.srcset;
+      lazyImage.classList.remove('lazy-img');
+      lazyImageObserver.unobserve(lazyImage);
+    }
+  });
+});
 
 /**
  * Create restaurant operating hours HTML table and add it to the webpage.
@@ -645,6 +667,22 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   });
   container.appendChild(ul);
 }
+
+let createImg = (restaurant) => {
+  const image = document.createElement('img');
+  image.className = 'restaurant-img lazy-img';
+  image.alt = `${restaurant.name} profile photo`;
+
+  const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
+  if (defaultImage) {
+    const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
+    image.dataset.src = `${withoutExtensions}.jpg`;
+    image.dataset.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
+    image.classList.add('lazy-img');
+  }
+  return image;
+}
+
 
 /**
  * Create review HTML and add it to the webpage.
@@ -692,6 +730,7 @@ createReviewHTML = (review) => {
 
   return li;
 }
+
 
 /**
  * Add restaurant name to the breadcrumb navigation menu
