@@ -7,35 +7,41 @@ var eslint = require('gulp-eslint');
 var browserSync = require('browser-sync').create();
 var sourcemaps = require('gulp-sourcemaps');
 
-gulp.task('default', ['copy-html', 'copy-images', 'styles', 'scripts'],function() {
 
-	gulp.watch('css/**/*.css', ['styles']);
-	gulp.watch('/index.html', ['copy-html']);
-	gulp.watch('./dist/index.html').on('change', browserSync.reload);
+gulp.task('default',['styles'],function(){
 	browserSync.init({
 		server: './'
 	});
-});
+})
+// gulp.task('default', ['copy-html', 'copy-images', 'styles', 'scripts'],function() {
 
-gulp.task('dist', [
-	'copy-html',
-	'copy-images',
-	'styles',
-	'lint',
-	'scripts-dist'
-]);
+// 	gulp.watch('css/**/*.css', ['styles']);
+// 	gulp.watch('/index.html', ['copy-html']);
+// 	gulp.watch('./dist/index.html').on('change', browserSync.reload);
+// 	browserSync.init({
+// 		server: './'
+// 	});
+// });
+
+// gulp.task('dist', [
+// 	'copy-html',
+// 	'copy-images',
+// 	'styles',
+// 	'lint',
+// 	'scripts-dist'
+// ]);
 
 gulp.task('styles', function(){
-    return gulp.src('css/**/*.css')
-    .pipe(concat('styles.css'))
-    .pipe(cleanCSS())
-    .pipe(autoprefixer('last 2 versions'))
-    .pipe(gulp.dest('dist/css'))
+    gulp.src('css/**/*.css')
+	    .pipe(concat('styles.css'))
+	    .pipe(cleanCSS())
+	    .pipe(autoprefixer('last 2 versions'))
+	    .pipe(gulp.dest('css'))
 });
 
 gulp.task('scripts', function() {
 	gulp.src('js/**/*.js')
-		.pipe(concat('all.js'))
+		// .pipe(concat('all.js'))
 		.pipe(gulp.dest('dist/js'));
 });
 
@@ -48,15 +54,15 @@ gulp.task('scripts', function() {
 // 		.pipe(gulp.dest('dist/js'));
 // });
 
-gulp.task('copy-html', function() {
-	gulp.src('./index.html')
-		.pipe(gulp.dest('./dist'));
-});
+// gulp.task('copy-html', function() {
+// 	gulp.src('./index.html')
+// 		.pipe(gulp.dest('./dist'));
+// });
 
-gulp.task('copy-images', function() {
-	gulp.src('img/*')
-		.pipe(gulp.dest('dist/img'));
-});
+// gulp.task('copy-images', function() {
+// 	gulp.src('img/*')
+// 		.pipe(gulp.dest('dist/img'));
+// });
 
 // gulp.task('lint', function () {
 // 	return gulp.src(['js/**/*.js'])
