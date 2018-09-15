@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
   updateRestaurants();
-  // fetchMap();
 });
 
 /**

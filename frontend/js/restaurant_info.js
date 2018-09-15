@@ -1,11 +1,20 @@
 let restaurant;
 var map;
 
-
+document.addEventListener('DOMContentLoaded', (event) => {
+  fetchRestaurantFromURL((error, restaurant)=>{
+    if (error) { // Got an error!
+      console.error(error);
+    } else {
+      console.log("there's a map!");
+      setLazyLoadMap();
+    }
+  });
+});
 /**
  * Initialize Google map, called from HTML.
  */
-window.initMap = () => {
+initMap = () => {
   fetchRestaurantFromURL((error, restaurant) => {
     if (error) { // Got an error!
       console.error(error);
@@ -21,6 +30,29 @@ window.initMap = () => {
     }
   });
 }
+
+let setLazyLoadMap = () => {
+  let lazyMap = document.getElementById('map');
+
+  if ("IntersectionObserver" in window && "IntersectionObserverEntry" in window && "intersectionRatio" in window.IntersectionObserverEntry.prototype) {
+    lazyMapObserver.observe(lazyMap);
+  }  else {
+    console.log('~~~~~~~~~~~~~~~~~ no IntersectionObserver ~~~~~~~~~~~~~~~~~');
+    return;
+  }
+}
+
+let lazyMapObserver = new IntersectionObserver( entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+    let lazyMap = entry.target;
+    var mapsJS = document.createElement('script');
+    mapsJS.src = 'https://maps.googleapis.com/maps/api/js?callback=initMap&key=AIzaSyDEwOJQAdsxaQFqXkFTvxAWQaOkF_j4Lo8';
+    document.getElementsByTagName('head')[0].appendChild(mapsJS)
+    lazyMapObserver.unobserve(lazyMap);
+  }
+  })
+});
 
 /**
  * Get current restaurant from page URL.
