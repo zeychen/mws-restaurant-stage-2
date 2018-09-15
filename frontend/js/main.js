@@ -10,7 +10,7 @@ var markers = []
 document.addEventListener('DOMContentLoaded', (event) => {
   fetchNeighborhoods();
   fetchCuisines();
-  // updateRestaurants();
+  updateRestaurants();
   // fetchMap();
 });
 
@@ -89,6 +89,7 @@ updateRestaurants = () => {
       resetRestaurants(restaurants);
       fillRestaurantsHTML();
       setLazyLoadImage();
+      setLazyLoadMap();
     }
   })
 }
@@ -116,7 +117,7 @@ fillRestaurantsHTML = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
     ul.append(createRestaurantHTML(restaurant));
   });
-  addMarkersToMap();
+  // addMarkersToMap();
 }
 
 let createImg = (restaurant) => {
@@ -197,7 +198,8 @@ let lazyImageObserver = new IntersectionObserver( entries => {
 /**
  * Initialize Google map, called from HTML.
  */
-window.initMap = () => {
+
+initMap = () => {
   let loc = {
     lat: 40.722216,
     lng: -73.987501
@@ -207,9 +209,32 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
-  updateRestaurants();
+  // updateRestaurants();
+  addMarkersToMap();
 }
 
+let setLazyLoadMap = () => {
+  let lazyMap = document.getElementById('map');
+
+  if ("IntersectionObserver" in window && "IntersectionObserverEntry" in window && "intersectionRatio" in window.IntersectionObserverEntry.prototype) {
+    lazyMapObserver.observe(lazyMap);
+  }  else {
+    console.log('~~~~~~~~~~~~~~~~~ no IntersectionObserver ~~~~~~~~~~~~~~~~~');
+    return;
+  }
+}
+
+let lazyMapObserver = new IntersectionObserver( entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+    let lazyMap = entry.target;
+    var mapsJS = document.createElement('script');
+    mapsJS.src = 'https://maps.googleapis.com/maps/api/js?callback=initMap&key=AIzaSyDEwOJQAdsxaQFqXkFTvxAWQaOkF_j4Lo8';
+    document.getElementsByTagName('head')[0].appendChild(mapsJS)
+    lazyMapObserver.unobserve(lazyMap);
+  }
+  })
+});
 /**
  * Add markers for current restaurants to the map.
  */
