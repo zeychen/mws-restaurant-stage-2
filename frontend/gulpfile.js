@@ -6,6 +6,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var eslint = require('gulp-eslint');
 var browserSync = require('browser-sync').create();
 var sourcemaps = require('gulp-sourcemaps');
+var terser = require('gulp-terser');
 
 
 gulp.task('default',['styles'],function(){
@@ -42,11 +43,12 @@ gulp.task('styles', function(){
 	    .pipe(gulp.dest('css'))
 });
 
-// gulp.task('scripts', function() {
-// 	gulp.src('js/**/*.js')
-// 		// .pipe(concat('all.js'))
-// 		.pipe(gulp.dest('dist/js'));
-// });
+gulp.task('scripts', function() {
+	gulp.src('js/**/*.js')
+	.pipe(terser())
+		// .pipe(concat('all.js'))
+		.pipe(gulp.dest('js'));
+});
 
 // gulp.task('scripts-dist', function() {
 // 	gulp.src('js/**/*.js')
