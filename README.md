@@ -7,5 +7,5 @@ This project is the continuation of Restaurant Reviews Stage 1 by taking the res
 1. Make sure to have sailsjs and nodejs installed
 2. Clone this repository
 3. Run `npm install` to install all dependencies
-4. Navigate to root folder and run `gulp`
+4. Navigate to frontend folder and run `gulp`
 5. Site is served on localhost:1337
