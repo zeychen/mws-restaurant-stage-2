@@ -61,6 +61,11 @@ self.addEventListener('fetch', function(event) {
       return;
   }
 
+  if(requestUrl.origin.startsWith('https://fonts.googleapis.com/css?')){
+    event.respondWith(serveCache(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(function(response) {
       if(response) return response;
@@ -69,6 +74,18 @@ self.addEventListener('fetch', function(event) {
   );
 });
   
+function serveCache(request) {
+  return caches.open(staticCacheName).then(function(cache) {
+    return cache.match(request).then(function(response) {
+      if (response) return response;
+
+      return fetch(request).then(function(networkResponse) {
+        cache.put(request, networkResponse.clone());
+        return networkResponse;
+      });
+    });
+  });
+}
 
 function servePhoto(request) {
   var storageUrl = request.url.replace(/-\d+px\.jpg$/, '');

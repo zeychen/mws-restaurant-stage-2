@@ -9,6 +9,9 @@ var sourcemaps = require('gulp-sourcemaps');
 
 
 gulp.task('default',['styles'],function(){
+	gulp.watch('./css/*.css').on('change', browserSync.reload);
+	gulp.watch('./js/*.js').on('change', browserSync.reload);
+	gulp.watch('./*.html').on('change', browserSync.reload);
 	browserSync.init({
 		server: './'
 	});
@@ -39,11 +42,11 @@ gulp.task('styles', function(){
 	    .pipe(gulp.dest('css'))
 });
 
-gulp.task('scripts', function() {
-	gulp.src('js/**/*.js')
-		// .pipe(concat('all.js'))
-		.pipe(gulp.dest('dist/js'));
-});
+// gulp.task('scripts', function() {
+// 	gulp.src('js/**/*.js')
+// 		// .pipe(concat('all.js'))
+// 		.pipe(gulp.dest('dist/js'));
+// });
 
 // gulp.task('scripts-dist', function() {
 // 	gulp.src('js/**/*.js')

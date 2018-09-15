@@ -71,6 +71,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const image = document.getElementById('restaurant-img');
   const defaultImage = DBHelper.imageUrlForRestaurant(restaurant);
   const withoutExtensions = defaultImage.replace(/\.[^/.]+$/, '');
+  image.alt = `${restaurant.name} profile photo`;
   image.dataset.src = `${withoutExtensions}.jpg`;
   image.dataset.srcset = `${withoutExtensions}_250.webp 250w, ${withoutExtensions}_150.webp 150w`;
   image.classList.add('lazy-img');
