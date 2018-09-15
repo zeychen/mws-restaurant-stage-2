@@ -1,52 +1,11 @@
-# Local Development API Server
-## Usage
-#### Get Restaurants
-```
-curl "http://localhost:1337/restaurants"
-```
-#### Get Restaurants by id
-````
-curl "http://localhost:1337/restaurants/{3}"
-````
+# Mobile Web Specialist Certification Course
+## Restaurant Reviews Stage 2
+### Project Overview
+This project is the continuation of Restaurant Reviews Stage 1 by taking the responsive, accessible design built in Stage One and connect it to an external server. It uses asynchronous JavaScript to request JSON data from the server. Store data received from the server in an offline database using IndexedDB, which will create an app shell architecture. Finally, the site is optimized to meet performance benchmarks tested using Lighthouse.
 
-## Architecture
-Local server
-- Node.js
-- Sails.js
-
-## Contributors
-
-- [Brandy Lee Camacho - Technical Project Manager](mailto:brandy.camacho@udacity.com)
-- [David Harris - Web Services Lead](mailto:david.harris@udacity.com)
-- [Omar Albeik - Frontend engineer](mailto:omaralbeik@gmail.com)
-
-## Getting Started
-
-### Development local API Server
-_Location of server = /server_
-Server depends on [node.js LTS Version: v6.11.2 ](https://nodejs.org/en/download/), [npm](https://www.npmjs.com/get-npm), and [sails.js](http://sailsjs.com/)
-Please make sure you have these installed before proceeding forward.
-
-Great, you are ready to proceed forward; awesome!
-
-Let's start with running commands in your terminal, known as command line interface (CLI)
-
-###### Install project dependancies
-```Install project dependancies
-# npm i
-```
-###### Install Sails.js globally
-```Install sails global
-# npm i sails -g
-```
-###### Start the server
-```Start server
-# node server
-```
-### You should now have access to your API server environment
-debug: Environment : development
-debug: Port        : 1337
-
-
-If you find a bug in the source code or a mistake in the documentation, you can help us by
-submitting an issue to our [Waffle Dashboard](https://waffle.io/udacity/mwnd-issues). Even better you can submit a Pull Request with a fix :)
+### Instructions
+1. Make sure to have sailsjs and nodejs installed
+2. Clone this repository
+3. Run `npm install` to install all dependencies
+4. Navigate to root folder and run `gulp`
+5. Site is served on localhost:1337
